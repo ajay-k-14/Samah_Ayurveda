@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ service.name }} | Samah Ayurveda</title>
+  <meta name="description" content="{{ service.summary }}">
+  <meta name="theme-color" content="#314732">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+{% include "_site_header.html" %}
+
+<main id="main">
+  <section class="service-page">
+    <div class="container">
+      <a class="service-back" href="{{ url_for('index') }}#treatments">← All Treatments</a>
+      <div class="service-detail split">
+        <div class="split-media">
+          <div class="frame frame-soft">
+            <img src="{{ url_for('static', filename='images/' ~ service.image) }}" alt="{{ service.image_alt }}" width="604" height="584">
+          </div>
+          {% if service.id == "postnatal-care" %}
+          <div class="badge-blob badge-home"><p>Home Care Services Available</p></div>
+          {% endif %}
+        </div>
+        <div class="split-copy">
+          <p class="eyebrow">{{ service.name }}</p>
+          <h1>{{ service.heading }}</h1>
+          <p>{{ service.description }}</p>
+          <ul class="feature-list service-feature-list">
+            {% for item in service["items"] %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+          <a href="{{ url_for('index', service=service.name) }}#appointment" class="btn btn-green">{{ service.action }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% include "_site_footer.html" %}
+
+<script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>

@@ -21,6 +21,11 @@ so nothing is lost while developing (a warning is logged).
 
 Stored in MongoDB collections `appointments` and `contacts` (database `MONGO_DB`).
 
+## Treatment pages
+The homepage links to the individual treatment pages at `/treatments/postnatal-care`,
+`/treatments/rejuvenation`, and `/treatments/cosmetology`. These pages are also available
+from the Treatments dropdown in the site navigation.
+
 ## Google Maps
 Set `GOOGLE_MAPS_API_KEY` in `.env` (never in source). The themed JavaScript map loads when a key is present;
 otherwise a keyless embedded map is shown. Restrict the key by HTTP referrer in Google Cloud Console, and set
@@ -39,6 +44,6 @@ otherwise a keyless embedded map is shown. Restrict the key by HTTP referrer in 
 ## Structure
 ```
 app.py  requirements.txt  .env
-templates/index.html
+templates/index.html  templates/service.html  templates/_site_header.html
 static/css/style.css  static/js/script.js  static/images/...
 ```

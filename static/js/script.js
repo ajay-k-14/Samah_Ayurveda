@@ -20,7 +20,7 @@
 
       // Highlight the nav link of the section currently in view
       const links = $$('.primary-nav li a');
-      const map = new Map(links.map((a) => [a.getAttribute('href'), a]));
+      const map = new Map(links.map((a) => [new URL(a.href).hash, a]));
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
           const link = map.get('#' + e.target.id);
@@ -40,11 +40,25 @@
       const btn = $('#menuToggle');
       const nav = $('#primaryNav');
       if (!btn || !nav) return;
+      const dropdowns = $$('.nav-dropdown-toggle', nav);
+      dropdowns.forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const open = toggle.getAttribute('aria-expanded') !== 'true';
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.closest('.nav-dropdown').classList.toggle('is-open', open);
+        });
+      });
       const set = (open) => {
         nav.classList.toggle('open', open);
         btn.setAttribute('aria-expanded', String(open));
         btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         document.body.style.overflow = open ? 'hidden' : '';
+        if (!open) {
+          dropdowns.forEach((toggle) => {
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.closest('.nav-dropdown').classList.remove('is-open');
+          });
+        }
       };
       btn.addEventListener('click', () => set(!nav.classList.contains('open')));
       nav.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
@@ -88,6 +102,10 @@
     async init() {
       const select = $('#a-service');
       if (!select) return;
+      const requested = new URLSearchParams(window.location.search).get('service');
+      if (requested && [...select.options].some((option) => option.value === requested)) {
+        select.value = requested;
+      }
       try {
         const res = await fetch('/api/services');
         if (!res.ok) return;
@@ -99,7 +117,8 @@
           o.textContent = name;
           select.appendChild(o);
         });
-        select.value = current;
+        const validRequested = [...select.options].some((option) => option.value === requested);
+        select.value = validRequested ? requested : current;
       } catch (_) { /* keep the static options */ }
     },
   };

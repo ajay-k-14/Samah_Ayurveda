@@ -1,0 +1,39 @@
+<footer class="site-footer">
+  <svg class="deco deco-leaf foot-leaf float float-slow" viewBox="0 0 200 260" aria-hidden="true">
+    <g fill="#314732">
+      <path d="M100 250C60 210 50 130 100 20c50 110 40 190 0 230z" opacity=".95"/>
+      <path d="M96 230C40 215 8 160 8 96c60 14 96 70 88 134z" opacity=".9"/>
+      <path d="M104 200c50-6 88-50 92-108-56 6-96 52-92 108z" opacity=".85"/>
+    </g>
+    <g stroke="#f9f9eb" stroke-width="1.6" fill="none" opacity=".55">
+      <path d="M100 246V40M96 226C60 190 36 150 26 112M104 196c30-30 60-62 80-96"/>
+    </g>
+  </svg>
+  <div class="container footer-grid">
+    <div>
+      <h3 class="foot-brand">Samah Ayurveda</h3>
+      <p class="foot-tag">“Ancient Wisdom for a Healthier, Happier You”</p>
+      <div class="social">
+        <a href="https://instagram.com/{{ site.instagram_handle }}" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ico" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6"/></svg></a>
+        <a href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ico" viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8L4 20z"/><path d="M9 9c0 3 3 6 6 6l1-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2L9 9z"/></svg></a>
+        <a href="tel:{{ site.phone_tel }}" aria-label="Call us"><svg class="ico" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1C10.7 20 4 13.3 4 5a1 1 0 0 1 1-1z"/></svg></a>
+      </div>
+    </div>
+    <nav aria-label="Footer">
+      <h4>Quick Links</h4>
+      <ul class="foot-links">
+        <li><a href="{{ url_for('index') }}#home">Home</a></li><li><a href="{{ url_for('index') }}#treatments">Treatments</a></li>
+        <li><a href="{{ url_for('index') }}#about">About</a></li><li><a href="{{ url_for('service_detail', service_id='postnatal-care') }}">Postnatal Care</a></li>
+        <li><a href="{{ url_for('index') }}#contact">Contact</a></li><li><a href="{{ url_for('service_detail', service_id='rejuvenation') }}">Rejuvenation</a></li>
+        <li><a href="{{ url_for('index') }}#gallery">Gallery</a></li><li><a href="{{ url_for('service_detail', service_id='cosmetology') }}">Cosmetology</a></li>
+      </ul>
+    </nav>
+    <div>
+      <h4>Contact</h4>
+      <p>{{ site.address_lines[0] }}<br>{{ site.address_lines[1] }}</p>
+      <p><a href="tel:{{ site.phone_tel }}">{{ site.phone_display }}</a></p>
+      <p><a href="https://instagram.com/{{ site.instagram_handle }}" target="_blank" rel="noopener">@{{ site.instagram_handle }}</a></p>
+    </div>
+  </div>
+  <p class="copyright">© <script>document.write(new Date().getFullYear());</script> Samah Ayurveda. All Rights Reserved. <br> Developed by <a href="https://oxyfoxy.in/" target="_blank" rel="noopener">Oxyfoxy</a></p>
+</footer>

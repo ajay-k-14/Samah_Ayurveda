@@ -2,7 +2,8 @@
 
 Routes
 ------
-GET  /                  Single-page website
+GET  /                  Website homepage
+GET  /treatments/<id>   Treatment detail page
 GET  /api/services      Service catalogue (JSON)
 POST /api/appointments  Store an appointment request (MongoDB)
 POST /api/contact       Store a contact message (MongoDB)
@@ -18,7 +19,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, abort, jsonify, render_template, request
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
@@ -79,6 +80,52 @@ SERVICES = [
         ],
     },
 ]
+SERVICE_DETAILS = {
+    "postnatal-care": {
+        "description": "The weeks after birth are a time for rest, warmth and nourishment. Our postnatal programme draws on traditional Ayurvedic practice to help new mothers recover comfortably while their babies are cared for with equal tenderness. Every plan is shaped around the mother's health, delivery and daily needs.",
+        "items": [
+            "Traditional Ayurvedic postnatal therapies",
+            "Mother & baby wellness",
+            "Nourishing therapies",
+            "Postpartum relaxation",
+            "Recovery support",
+            "Home care services",
+        ],
+        "image": "postnatal.jpg",
+        "image_alt": "A new mother smiling with her baby",
+        "heading": "Gentle Care for the Mother. Nurturing Care for the Baby.",
+        "action": "Enquire About Postnatal Care",
+    },
+    "rejuvenation": {
+        "description": "Ayurvedic rejuvenation works with the body's natural rhythms. Warm herbal oils, skilled hands and unhurried time help release tension and bring back energy, so you leave feeling lighter and more like yourself.",
+        "items": [
+            "Panchakarma",
+            "Ayurvedic Massage",
+            "Stress Relief",
+            "Relaxation Therapies",
+            "Detox Treatments",
+            "Vitality & Wellness",
+        ],
+        "image": "rejuvenation.jpg",
+        "image_alt": "Woman relaxing during an Ayurvedic herbal bolus massage",
+        "heading": "Restore. Rejuvenate. Renew.",
+        "action": "Book a Rejuvenation Session",
+    },
+    "cosmetology": {
+        "description": "Healthy skin begins with balance. We use gentle, plant-based preparations and mindful techniques that care for your skin while supporting how you feel overall.",
+        "items": [
+            "Natural Skincare",
+            "Ayurvedic Facials",
+            "Skin Therapies",
+            "Radiance Treatments",
+            "Wellness-Based Beauty Care",
+        ],
+        "image": "cosmetology.jpg",
+        "image_alt": "Ayurvedic facial with a natural herbal mask",
+        "heading": "Natural Beauty, Rooted in Ayurveda",
+        "action": "Discover Natural Beauty",
+    },
+}
 SERVICE_NAMES = {s["name"] for s in SERVICES} | {"General Consultation"}
 
 # -------------------------------------------------------------------- storage
@@ -154,9 +201,24 @@ def index():
     return render_template(
         "index.html",
         site=SITE,
+        services=SERVICES,
         maps_api_key=os.getenv("GOOGLE_MAPS_API_KEY", ""),
         map_lat=os.getenv("MAP_LAT", "12.8830"),
         map_lng=os.getenv("MAP_LNG", "74.8430"),
+    )
+
+
+@app.get("/treatments/<service_id>")
+def service_detail(service_id):
+    service = next((item for item in SERVICES if item["id"] == service_id), None)
+    details = SERVICE_DETAILS.get(service_id)
+    if service is None or details is None:
+        abort(404)
+    return render_template(
+        "service.html",
+        site=SITE,
+        services=SERVICES,
+        service={**service, **details},
     )
 
 

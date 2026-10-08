@@ -53,31 +53,7 @@
 <a class="skip-link" href="#main">Skip to content</a>
 
 <!-- ============================ HEADER ============================ -->
-<header class="site-header" id="siteHeader">
-  <div class="container header-inner">
-    <a href="#home" class="brand" aria-label="Samah Ayurveda – home">
-      <img src="{{ url_for('static', filename='images/logo-new.png') }}" alt="Samah Ayurveda" width="800" height="564">
-    </a>
-
-    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#treatments">Treatments</a></li>
-        <li><a href="#postnatal">Postnatal Care</a></li>
-        <li><a href="#rejuvenation">Rejuvenation</a></li>
-        <li><a href="#cosmetology">Cosmetology</a></li>
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-      <a href="#appointment" class="btn btn-terracotta nav-cta">Book Appointment</a>
-    </nav>
-
-    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</header>
+{% include "_site_header.html" %}
 
 <main id="main">
 
@@ -95,7 +71,11 @@
         <a href="#appointment" class="btn btn-green">Book an Appointment</a>
         <a href="#treatments" class="btn btn-outline">Explore Treatments</a>
       </div>
-      <p class="hero-focus">Rejuvenation <i></i> Postnatal Care <i></i> Cosmetology</p>
+      <p class="hero-focus">
+        <a href="{{ url_for('service_detail', service_id='rejuvenation') }}">Rejuvenation</a><i></i>
+        <a href="{{ url_for('service_detail', service_id='postnatal-care') }}">Postnatal Care</a><i></i>
+        <a href="{{ url_for('service_detail', service_id='cosmetology') }}">Cosmetology</a>
+      </p>
     </div>
 
     <div class="hero-visual">
@@ -145,7 +125,7 @@
           <li><svg class="ico"><use href="#i-sprout"/></svg>Nourishment &amp; Rejuvenation</li>
           <li class="strong"><svg class="ico"><use href="#i-home"/></svg>Home Care Services Available</li>
         </ul>
-        <a class="card-link" href="#postnatal">Explore Postnatal Care</a>
+        <a class="card-link" href="{{ url_for('service_detail', service_id='postnatal-care') }}">Explore Postnatal Care</a>
         <div class="card-photo img-reveal"><img src="{{ url_for('static', filename='images/postnatal.jpg') }}" alt="A mother kissing her laughing baby" loading="lazy" width="660" height="352"></div>
       </article>
 
@@ -158,7 +138,7 @@
           <li><svg class="ico"><use href="#i-stones"/></svg>Stress Relief &amp; Relaxation</li>
           <li><svg class="ico"><use href="#i-leaf"/></svg>Vitality &amp; Wellness</li>
         </ul>
-        <a class="card-link" href="#rejuvenation">Explore Rejuvenation</a>
+        <a class="card-link" href="{{ url_for('service_detail', service_id='rejuvenation') }}">Explore Rejuvenation</a>
         <div class="card-photo img-reveal"><img src="{{ url_for('static', filename='images/rejuvenation.jpg') }}" alt="Ayurvedic herbal bolus massage" loading="lazy" width="596" height="626"></div>
       </article>
 
@@ -171,90 +151,9 @@
           <li><svg class="ico"><use href="#i-face"/></svg>Facial &amp; Skin Therapies</li>
           <li><svg class="ico"><use href="#i-sparkle"/></svg>Radiance &amp; Skin Wellness</li>
         </ul>
-        <a class="card-link" href="#cosmetology">Explore Cosmetology</a>
+        <a class="card-link" href="{{ url_for('service_detail', service_id='cosmetology') }}">Explore Cosmetology</a>
         <div class="card-photo img-reveal"><img src="{{ url_for('static', filename='images/cosmetology.jpg') }}" alt="Ayurvedic herbal face mask being applied" loading="lazy" width="604" height="584"></div>
       </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ POSTNATAL ============================ -->
-<section class="section feature postnatal" id="postnatal">
-  <svg class="deco deco-leaf feature-leaf float float-slow" aria-hidden="true"><use href="#leaf-cluster"/></svg>
-  <div class="container split">
-    <div class="split-media reveal">
-      <div class="frame frame-soft img-reveal">
-        <img src="{{ url_for('static', filename='images/postnatal.jpg') }}" alt="A new mother smiling with her baby" loading="lazy" width="392" height="330">
-      </div>
-      <div class="badge-blob badge-home">
-        <svg class="ico" aria-hidden="true"><use href="#i-home"/></svg>
-        <p>Home Care Services Available</p>
-      </div>
-    </div>
-
-    <div class="split-copy reveal">
-      <p class="eyebrow">Postnatal Care</p>
-      <h2>Gentle Care for the Mother.<br>Nurturing Care for the Baby.</h2>
-      <p>The weeks after birth are a time for rest, warmth and nourishment. Our postnatal programme draws on traditional Ayurvedic practice to help new mothers recover comfortably while their babies are cared for with equal tenderness. Every plan is shaped around the mother's health, delivery and daily needs.</p>
-      <ul class="feature-list">
-        <li><svg class="ico"><use href="#i-sprout"/></svg>Traditional Ayurvedic postnatal therapies</li>
-        <li><svg class="ico"><use href="#i-mother"/></svg>Mother &amp; baby wellness</li>
-        <li><svg class="ico"><use href="#i-leaf"/></svg>Nourishing therapies</li>
-        <li><svg class="ico"><use href="#i-stones"/></svg>Postpartum relaxation</li>
-        <li><svg class="ico"><use href="#i-heart"/></svg>Recovery support</li>
-        <li><svg class="ico"><use href="#i-home"/></svg>Home care services</li>
-      </ul>
-      <a href="#appointment" class="btn btn-green" data-service="Postnatal Care">Enquire About Postnatal Care</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ REJUVENATION ============================ -->
-<section class="section feature rejuvenation" id="rejuvenation">
-  <div class="container split split-reverse">
-    <div class="split-copy reveal">
-      <p class="eyebrow">Rejuvenation</p>
-      <h2>Restore. Rejuvenate. Renew.</h2>
-      <p>Ayurvedic rejuvenation works with the body's natural rhythms. Warm herbal oils, skilled hands and unhurried time help release tension and bring back energy, so you leave feeling lighter and more like yourself.</p>
-      <ul class="chip-grid">
-        <li><svg class="ico"><use href="#i-mortar"/></svg>Panchakarma</li>
-        <li><svg class="ico"><use href="#i-drop"/></svg>Ayurvedic Massage</li>
-        <li><svg class="ico"><use href="#i-lotus"/></svg>Stress Relief</li>
-        <li><svg class="ico"><use href="#i-stones"/></svg>Relaxation Therapies</li>
-        <li><svg class="ico"><use href="#i-leaf"/></svg>Detox Treatments</li>
-        <li><svg class="ico"><use href="#i-sun"/></svg>Vitality &amp; Wellness</li>
-      </ul>
-      <a href="#appointment" class="btn btn-green" data-service="Rejuvenation">Book a Rejuvenation Session</a>
-    </div>
-    <div class="split-media reveal">
-      <div class="frame frame-blob-b img-reveal">
-        <img src="{{ url_for('static', filename='images/rejuvenation.jpg') }}" alt="Woman relaxing during an Ayurvedic herbal bolus massage" loading="lazy" width="596" height="626">
-      </div>
-      <svg class="deco deco-leaf rej-leaf float" aria-hidden="true"><use href="#leaf-cluster"/></svg>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ COSMETOLOGY ============================ -->
-<section class="section feature cosmetology" id="cosmetology">
-  <div class="container split">
-    <div class="split-media reveal">
-      <div class="frame frame-blob-c img-reveal">
-        <img src="{{ url_for('static', filename='images/cosmetology.jpg') }}" alt="Ayurvedic facial with a natural herbal mask" loading="lazy" width="604" height="584">
-      </div>
-    </div>
-    <div class="split-copy reveal">
-      <p class="eyebrow">Cosmetology</p>
-      <h2>Natural Beauty,<br>Rooted in Ayurveda</h2>
-      <p>Healthy skin begins with balance. We use gentle, plant-based preparations and mindful techniques that care for your skin while supporting how you feel overall.</p>
-      <ul class="feature-list two-col">
-        <li><svg class="ico"><use href="#i-leaf"/></svg>Natural Skincare</li>
-        <li><svg class="ico"><use href="#i-face"/></svg>Ayurvedic Facials</li>
-        <li><svg class="ico"><use href="#i-drop"/></svg>Skin Therapies</li>
-        <li><svg class="ico"><use href="#i-sparkle"/></svg>Radiance Treatments</li>
-        <li><svg class="ico"><use href="#i-lotus"/></svg>Wellness-Based Beauty Care</li>
-      </ul>
-      <a href="#appointment" class="btn btn-terracotta" data-service="Cosmetology">Discover Natural Beauty</a>
     </div>
   </div>
 </section>
@@ -473,36 +372,7 @@
 </main>
 
 <!-- ============================== FOOTER ============================== -->
-<footer class="site-footer">
-  <svg class="deco deco-leaf foot-leaf float float-slow" aria-hidden="true"><use href="#leaf-cluster"/></svg>
-  <div class="container footer-grid">
-    <div>
-      <h3 class="foot-brand">Samah Ayurveda</h3>
-      <p class="foot-tag">“Ancient Wisdom for a Healthier, Happier You”</p>
-      <div class="social">
-        <a href="https://instagram.com/{{ site.instagram_handle }}" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ico"><use href="#i-insta"/></svg></a>
-        <a href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ico"><use href="#i-whatsapp"/></svg></a>
-        <a href="tel:{{ site.phone_tel }}" aria-label="Call us"><svg class="ico"><use href="#i-phone"/></svg></a>
-      </div>
-    </div>
-    <nav aria-label="Footer">
-      <h4>Quick Links</h4>
-      <ul class="foot-links">
-        <li><a href="#home">Home</a></li><li><a href="#treatments">Treatments</a></li>
-        <li><a href="#about">About</a></li><li><a href="#postnatal">Postnatal Care</a></li>
-        <li><a href="#contact">Contact</a></li><li><a href="#rejuvenation">Rejuvenation</a></li>
-        <li><a href="#gallery">Gallery</a></li><li><a href="#cosmetology">Cosmetology</a></li>
-      </ul>
-    </nav>
-    <div>
-      <h4>Contact</h4>
-      <p>{{ site.address_lines[0] }}<br>{{ site.address_lines[1] }}</p>
-      <p><a href="tel:{{ site.phone_tel }}">{{ site.phone_display }}</a></p>
-      <p><a href="https://instagram.com/{{ site.instagram_handle }}" target="_blank" rel="noopener">@{{ site.instagram_handle }}</a></p>
-    </div>
-  </div>
-  <p class="copyright">© <script>document.write(new Date().getFullYear());</script> Samah Ayurveda. All Rights Reserved. <br> Developed by <a href="https://oxyfoxy.in/" target="_blank" rel="noopener">Oxyfoxy</a></p>
-</footer>
+{% include "_site_footer.html" %}
 
 <script>
   /* Public configuration for the map. The key is supplied by the server from .env. */

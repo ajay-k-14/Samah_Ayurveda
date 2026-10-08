@@ -1,0 +1,31 @@
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="{{ url_for('index') }}#home" class="brand" aria-label="Samah Ayurveda – home">
+      <img src="{{ url_for('static', filename='images/logo-new.png') }}" alt="Samah Ayurveda" width="800" height="564">
+    </a>
+
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+      <ul>
+        <li><a href="{{ url_for('index') }}#home">Home</a></li>
+        <li><a href="{{ url_for('index') }}#about">About</a></li>
+        <li class="nav-dropdown">
+          <button class="nav-dropdown-toggle" type="button" aria-expanded="false" aria-controls="treatmentsMenu">
+            Treatments <span class="nav-dropdown-arrow" aria-hidden="true"></span>
+          </button>
+          <ul class="nav-submenu" id="treatmentsMenu">
+            {% for item in services %}
+            <li><a href="{{ url_for('service_detail', service_id=item.id) }}">{{ item.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li><a href="{{ url_for('index') }}#gallery">Gallery</a></li>
+        <li><a href="{{ url_for('index') }}#contact">Contact</a></li>
+      </ul>
+      <a href="{{ url_for('index') }}#appointment" class="btn btn-terracotta nav-cta">Book Appointment</a>
+    </nav>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
