@@ -56,7 +56,7 @@
 <header class="site-header" id="siteHeader">
   <div class="container header-inner">
     <a href="#home" class="brand" aria-label="Samah Ayurveda – home">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Samah Ayurveda" width="800" height="564">
+      <img src="{{ url_for('static', filename='images/logo-new.png') }}" alt="Samah Ayurveda" width="800" height="564">
     </a>
 
     <nav class="primary-nav" id="primaryNav" aria-label="Primary">
@@ -277,7 +277,7 @@
 </section>
 
 <!-- ============================ PHILOSOPHY ============================ -->
-<section class="section philosophy" id="philosophy">
+<!-- <section class="section philosophy" id="philosophy">
   <div class="container narrow center">
     <h2>Rooted in Tradition.<br>Designed for You.</h2>
     <p class="lead-dark">Ayurveda, the ancient Indian science of life, sees each person as a unique balance of body, mind and nature. Care begins by listening to you, then choosing herbs, oils and routines that suit you.</p>
@@ -302,7 +302,7 @@
       </li>
     </ul>
   </div>
-</section>
+</section> -->
 
 <!-- ============================ GALLERY ============================ -->
 <section class="section gallery" id="gallery">
@@ -375,7 +375,10 @@
       <p class="appt-call"><svg class="ico"><use href="#i-phone"/></svg><a href="tel:{{ site.phone_tel }}">{{ site.phone_display }}</a></p>
     </div>
 
-    <form class="form-card" id="appointmentForm" data-endpoint="/api/appointments" novalidate>
+    <form action="https://api.web3forms.com/submit" method="POST" class="form-card" id="appointmentForm" data-endpoint="/api/appointments" novalidate>
+      
+      <input type="hidden" name="access_key" value="18e0d4d3-b10a-4794-a34d-591db3efc700">
+      
       <div class="form-grid">
         <div class="field">
           <label for="a-name">Full Name</label>
