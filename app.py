@@ -44,7 +44,7 @@ SITE = {
     "phone_tel": "+916363625258",
     "whatsapp": "916363625258",
     # Instagram handles cannot contain "ḥ"; the poster uses plain "samah".
-    "instagram_handle": "samah.ayurveda",
+    "instagram_handle": "samahayurveda",
     "maps_query": "Samah Ayurveda, Lalbagh, Mangalore, Karnataka 575003",
 }
 
