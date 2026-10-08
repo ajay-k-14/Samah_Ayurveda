@@ -37,7 +37,7 @@
             <li>{{ item }}</li>
             {% endfor %}
           </ul>
-          <a href="{{ url_for('index', service=service.name) }}#appointment" class="btn btn-green">{{ service.action }}</a>
+          <a href="{{ url_for('appointment', service=service.name) }}" class="btn btn-green">{{ service.action }}</a>
         </div>
       </div>
     </div>

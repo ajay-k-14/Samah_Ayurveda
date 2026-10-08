@@ -4,6 +4,7 @@ Routes
 ------
 GET  /                  Website homepage
 GET  /treatments/<id>   Treatment detail page
+GET  /appointment       Appointment booking page
 GET  /api/services      Service catalogue (JSON)
 POST /api/appointments  Store an appointment request (MongoDB)
 POST /api/contact       Store a contact message (MongoDB)
@@ -219,6 +220,19 @@ def service_detail(service_id):
         site=SITE,
         services=SERVICES,
         service={**service, **details},
+    )
+
+
+@app.get("/appointment")
+def appointment():
+    requested_service = request.args.get("service", "")
+    if requested_service not in SERVICE_NAMES:
+        requested_service = ""
+    return render_template(
+        "appointment.html",
+        site=SITE,
+        services=SERVICES,
+        selected_service=requested_service,
     )
 
 

@@ -267,12 +267,13 @@ p { margin: 0 0 1rem; }
 .quote footer { margin-top: .5rem; font-size: .88rem; color: var(--ink-soft); }
 
 /* ---------- Appointment ---------- */
-.appointment { background: var(--forest); color: var(--ivory); overflow: hidden; }
+.appointment { background: var(--ivory); color: var(--ink); overflow: hidden; }
 .appointment::before { content: ""; position: absolute; left: -5%; right: -5%; top: -1px; height: 56px; background: var(--white); border-radius: 0 0 50% 50% / 0 0 100% 100%; }
-.appointment h2 { color: var(--ivory); margin-bottom: 1.4rem; }
+.appointment h1, .appointment h2 { color: var(--forest); margin-bottom: 1.4rem; }
+.appointment .eyebrow.light { color: var(--forest); }
 .appt-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2rem, 6vw, 5rem); align-items: start; padding-top: 1.5rem; }
-.appt-intro p { color: rgba(249, 249, 235, .82); max-width: 38ch; }
-.appt-call { display: flex; align-items: center; gap: .7rem; margin-top: 2rem; font-family: var(--font-head); font-size: 1.5rem; color: var(--gold) !important; }
+.appt-intro p { color: var(--ink-soft); max-width: 38ch; }
+.appt-call { display: flex; align-items: center; gap: .7rem; margin-top: 2rem; font-family: var(--font-head); font-size: 1.5rem; color: var(--forest) !important; }
 .appt-call a { text-decoration: none; }
 
 .form-card { background: var(--ivory); color: var(--ink); padding: clamp(1.6rem, 3.5vw, 2.6rem); border-radius: 44px 90px 44px 90px / 44px 70px 44px 70px; box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .5); }

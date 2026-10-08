@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book an Appointment | Samah Ayurveda</title>
+  <meta name="description" content="Request an appointment at Samah Ayurveda in Lalbagh, Mangalore.">
+  <meta name="theme-color" content="#314732">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+{% include "_site_header.html" %}
+
+<main id="main">
+  <section class="section appointment">
+    <div class="container appt-grid">
+      <div class="appt-intro">
+        <p class="eyebrow light">Appointments</p>
+        <h1>Begin Your<br>Wellness Journey</h1>
+        <p>Tell us what you need and when suits you. Our team will call to confirm your visit. No registration or login required.</p>
+        <p class="appt-call">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1C10.7 20 4 13.3 4 5a1 1 0 0 1 1-1z"/></svg>
+          <a href="tel:{{ site.phone_tel }}">{{ site.phone_display }}</a>
+        </p>
+      </div>
+
+      <form action="https://api.web3forms.com/submit" method="POST" class="form-card" id="appointmentForm" novalidate>
+        <input type="hidden" name="access_key" value="18e0d4d3-b10a-4794-a34d-591db3efc700">
+        <input type="hidden" name="subject" value="New Appointment Booking">
+        <input type="hidden" name="from_name" value="Ayurvedic Clinic Website">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="a-name">Full Name</label>
+            <input id="a-name" name="name" type="text" autocomplete="name" required>
+            <small class="err" data-for="name"></small>
+          </div>
+          <div class="field">
+            <label for="a-phone">Phone Number</label>
+            <input id="a-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="98765 43210" required>
+            <small class="err" data-for="phone"></small>
+          </div>
+          <div class="field">
+            <label for="a-email">Email <span class="opt">(optional)</span></label>
+            <input id="a-email" name="email" type="email" autocomplete="email">
+            <small class="err" data-for="email"></small>
+          </div>
+          <div class="field">
+            <label for="a-service">Select Service</label>
+            <select id="a-service" name="service" required>
+              <option value="">Choose a service</option>
+              {% for item in services %}
+              <option value="{{ item.name }}"{% if selected_service == item.name %} selected{% endif %}>{{ item.name }}</option>
+              {% endfor %}
+              <option value="General Consultation"{% if selected_service == "General Consultation" %} selected{% endif %}>General Consultation</option>
+            </select>
+            <small class="err" data-for="service"></small>
+          </div>
+          <div class="field">
+            <label for="a-date">Preferred Date</label>
+            <input id="a-date" name="date" type="date" required>
+            <small class="err" data-for="date"></small>
+          </div>
+          <div class="field">
+            <label for="a-time">Preferred Time</label>
+            <select id="a-time" name="time" required>
+              <option value="">Choose a time</option>
+              <option>09:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
+              <option>02:00 PM</option><option>03:00 PM</option><option>04:00 PM</option><option>05:00 PM</option>
+            </select>
+            <small class="err" data-for="time"></small>
+          </div>
+          <div class="field full">
+            <label for="a-message">Message <span class="opt">(optional)</span></label>
+            <textarea id="a-message" name="message" rows="3"></textarea>
+          </div>
+        </div>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn btn-gold">Book an Appointment</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+{% include "_site_footer.html" %}
+
+<script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+<script>
+const appointmentForm = document.getElementById("appointmentForm");
+
+appointmentForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const status = appointmentForm.querySelector(".form-status");
+    const button = appointmentForm.querySelector("button[type='submit']");
+    const honeypot = appointmentForm.querySelector('input[name="website"]');
+    if (honeypot.value !== "") return;
+
+    status.textContent = "Sending appointment request...";
+    button.disabled = true;
+    button.textContent = "Sending...";
+
+    try {
+        const response = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            body: new FormData(appointmentForm)
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            status.textContent = "✓ Appointment request sent successfully! We will contact you shortly.";
+            appointmentForm.reset();
+        } else {
+            status.textContent = "✕ Unable to send your appointment request. Please try again.";
+            console.error(data);
+        }
+    } catch (error) {
+        console.error(error);
+        status.textContent = "✕ Something went wrong. Please try again.";
+    } finally {
+        button.disabled = false;
+        button.textContent = "Book an Appointment";
+    }
+});
+</script>
+</body>
+</html>
