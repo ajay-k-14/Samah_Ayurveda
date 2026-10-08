@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery | Samah Ayurveda</title>
+  <meta name="description" content="Explore moments of calm at Samah Ayurveda, including our clinic, treatments, postnatal care and cosmetology.">
+  <meta name="theme-color" content="#314732">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+{% include "_site_header.html" %}
+
+<main id="main">
+  <section class="section gallery" id="gallery">
+    <div class="container">
+      <header class="section-head center">
+        <p class="eyebrow">Gallery</p>
+        <h1>Moments of Calm</h1>
+      </header>
+
+      <div class="filters" role="group" aria-label="Filter gallery">
+        <button class="filter is-active" data-filter="all">All</button>
+        <button class="filter" data-filter="clinic">Clinic</button>
+        <button class="filter" data-filter="treatments">Treatments</button>
+        <button class="filter" data-filter="postnatal">Postnatal Care</button>
+        <button class="filter" data-filter="therapies">Ayurvedic Therapies</button>
+        <button class="filter" data-filter="cosmetology">Cosmetology</button>
+      </div>
+
+      <!-- Replace these with real photographs of the clinic: same markup, new files. -->
+      <div class="masonry" id="galleryGrid">
+        <figure class="g-item tall" data-cat="postnatal"><img src="{{ url_for('static', filename='images/gallery/new2-postnatal.png') }}" alt="Mother and baby cuddling" loading="lazy"><figcaption>Postnatal Care</figcaption></figure>
+        <figure class="g-item" data-cat="therapies treatments"><img src="{{ url_for('static', filename='images/gallery/new3-treatment.png') }}" alt="Herbal bolus massage" loading="lazy"><figcaption>Ayurvedic Therapies</figcaption></figure>
+        <figure class="g-item" data-cat="clinic"><img src="{{ url_for('static', filename='images/gallery/new_01_clinic.png') }}" alt="Brass vessels and greenery in the treatment room" loading="lazy"><figcaption>Clinic</figcaption></figure>
+        <figure class="g-item tall" data-cat="cosmetology"><img src="{{ url_for('static', filename='images/gallery/cosmetology 2nd.jpg') }}" alt="Facial treatment" loading="lazy"><figcaption>Cosmetology</figcaption></figure>
+        <figure class="g-item" data-cat="cosmetology"><img src="{{ url_for('static', filename='images/gallery/new-5-cosmetology.png') }}" alt="Herbal face mask applied with a brush" loading="lazy"><figcaption>Cosmetology</figcaption></figure>
+        <figure class="g-item" data-cat="clinic postnatal"><img src="{{ url_for('static', filename='images/gallery/clinic-3.jpg') }}" alt="Mother holding her sleeping baby" loading="lazy"><figcaption>Clinic</figcaption></figure>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% include "_site_footer.html" %}
+
+<script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>

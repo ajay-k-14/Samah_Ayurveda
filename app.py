@@ -5,6 +5,7 @@ Routes
 GET  /                  Website homepage
 GET  /treatments/<id>   Treatment detail page
 GET  /appointment       Appointment booking page
+GET  /gallery           Filterable photo gallery
 GET  /api/services      Service catalogue (JSON)
 POST /api/appointments  Store an appointment request (MongoDB)
 POST /api/contact       Store a contact message (MongoDB)
@@ -234,6 +235,11 @@ def appointment():
         services=SERVICES,
         selected_service=requested_service,
     )
+
+
+@app.get("/gallery")
+def gallery():
+    return render_template("gallery.html", site=SITE, services=SERVICES)
 
 
 @app.get("/api/services")
