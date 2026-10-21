@@ -70,7 +70,7 @@
   /* ---------- Fade-up / image reveal on scroll ---------- */
   const Reveal = {
     init() {
-      const targets = $$('.reveal, .img-reveal');
+      const targets = $$('.reveal, .img-reveal, .section-reveal');
       if (!('IntersectionObserver' in window)) { targets.forEach((t) => t.classList.add('in')); return; }
       const io = new IntersectionObserver((entries, obs) => {
         entries.forEach((e) => {

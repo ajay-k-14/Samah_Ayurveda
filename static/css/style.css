@@ -345,6 +345,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 /* ---------- Motion (slow, restrained) ---------- */
 .js .reveal { opacity: 0; transform: translateY(26px); transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); }
 .js .reveal.in { opacity: 1; transform: none; }
+.js .section-reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+.js .section-reveal.in { opacity: 1; transform: none; }
 .js .reveal:nth-child(2) { transition-delay: .12s; }
 .js .reveal:nth-child(3) { transition-delay: .24s; }
 .js .reveal:nth-child(4) { transition-delay: .36s; }
@@ -363,7 +365,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .js .reveal, .js .img-reveal img { opacity: 1; transform: none; }
+  .js .reveal, .js .section-reveal, .js .img-reveal img { opacity: 1; transform: none; }
 }
 
 /* ---------- Responsive ---------- */
