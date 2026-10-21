@@ -127,8 +127,16 @@ p { margin: 0 0 1rem; }
 .menu-toggle[aria-expanded="true"] span:nth-child(3) { top: 23px; transform: rotate(-45deg); }
 
 /* ---------- Decorative botanicals ---------- */
-.deco { position: absolute; pointer-events: none; z-index: 0; }
-.deco-leaf { width: 190px; height: 247px; opacity: .55; }
+.deco {
+  position: absolute; 
+  pointer-events: none; 
+  z-index: 0; 
+}
+.deco-leaf { 
+  width: 190px; 
+  height: 247px; 
+  opacity: .55; 
+}
 
 /* ---------- Hero ---------- */
 .hero { position: relative; padding: calc(var(--header-h) + clamp(2rem, 6vw, 5rem)) 0 clamp(4rem, 8vw, 7rem); overflow: hidden;
