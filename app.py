@@ -24,7 +24,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, abort, jsonify, render_template, request
 from pymongo import MongoClient
-from pymongo.errors import PyMongoError
+from pymongo.errors import DuplicateKeyError, PyMongoError
 
 load_dotenv()
 
@@ -33,6 +33,9 @@ DATA_DIR = BASE_DIR / "data"
 BOOKING_DB_PATH = Path(
     os.getenv("BOOKING_DB_PATH", str(DATA_DIR / "appointment_slots.sqlite3"))
 ).expanduser()
+BOOKING_STORAGE = os.getenv(
+    "BOOKING_STORAGE", "mongodb" if os.getenv("VERCEL") else "sqlite"
+).lower()
 
 app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
@@ -287,7 +290,23 @@ def _booking_connection():
     return conn
 
 
+def _booking_collection():
+    if BOOKING_STORAGE != "mongodb":
+        return None
+    coll = _collection("appointment_slots")
+    if coll is None:
+        raise RuntimeError("MongoDB booking storage is unavailable; check MONGO_URI.")
+    return coll
+
+
 def booked_times(appointment_date):
+    coll = _booking_collection()
+    if coll is not None:
+        return {
+            document["time"]
+            for document in coll.find({"date": appointment_date}, {"time": 1})
+        }
+
     conn = _booking_connection()
     try:
         rows = conn.execute(
@@ -300,6 +319,16 @@ def booked_times(appointment_date):
 
 
 def reserve_appointment(appointment):
+    coll = _booking_collection()
+    if coll is not None:
+        reservation = dict(appointment)
+        reservation["_id"] = f"{appointment['date']}|{appointment['time']}"
+        try:
+            coll.insert_one(reservation)
+            return True
+        except DuplicateKeyError:
+            return False
+
     conn = _booking_connection()
     try:
         conn.execute(
@@ -432,7 +461,7 @@ def appointment_availability():
         return jsonify({"ok": False, "error": "Choose today or a future date."}), 400
     try:
         booked = booked_times(requested_date)
-    except (sqlite3.Error, OSError):
+    except (sqlite3.Error, OSError, RuntimeError, PyMongoError):
         log.exception("Could not load appointment availability from %s", BOOKING_DB_PATH)
         return jsonify({"ok": False, "error": "Availability is temporarily unavailable."}), 503
     available = [slot for slot in TIME_SLOTS if slot not in booked]

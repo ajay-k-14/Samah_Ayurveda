@@ -9,10 +9,8 @@ pip install -r requirements.txt
 cp .env.example .env                                   # edit values
 python app.py                                          # http://127.0.0.1:5000
 ```
-Appointment times are reserved atomically in `data/appointment_slots.sqlite3`, so only one booking can claim a date/time.
-Appointment details are also stored in MongoDB (`MONGO_URI`); if MongoDB is unavailable, submissions are appended to
-`data/*.jsonl` so nothing is lost while developing (a warning is logged).
-On hosts where the project directory is read-only, set `BOOKING_DB_PATH` to an absolute path in a persistent writable directory.
+Appointment times are reserved atomically by date/time. Local development uses `data/appointment_slots.sqlite3`; Vercel uses the MongoDB `appointment_slots` collection, with a unique document ID for each slot. Set a reachable Atlas connection string in `MONGO_URI` on Vercel. Other hosts can set `BOOKING_STORAGE=mongodb` or configure `BOOKING_DB_PATH` to an absolute, persistent writable path for SQLite.
+Appointment details are also stored in MongoDB (`MONGO_URI`); if MongoDB is unavailable during local development, submissions are appended to `data/*.jsonl` so nothing is lost (a warning is logged).
 
 ## API
 | Method | Path | Purpose |
@@ -22,8 +20,8 @@ On hosts where the project directory is read-only, set `BOOKING_DB_PATH` to an a
 | POST | `/api/appointments` | name, phone, email?, service, date, time, message? |
 | POST | `/api/contact` | name, email, message |
 
-Appointment slots are unique by date and time. Appointment details are stored in the SQLite reservation database and
-mirrored to MongoDB collections `appointments` and `contacts` (database `MONGO_DB`), or JSONL when MongoDB is unavailable.
+Appointment slots are unique by date and time. Appointment details are stored in MongoDB collections `appointments`
+and `contacts` (database `MONGO_DB`), or JSONL when MongoDB is unavailable locally.
 
 ## Treatment pages
 The homepage links to the individual treatment pages at `/treatments/postnatal-care`,
