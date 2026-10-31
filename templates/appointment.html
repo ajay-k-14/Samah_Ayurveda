@@ -100,6 +100,16 @@ const appointmentTime = document.getElementById("a-time");
 const availabilityStatus = document.getElementById("availabilityStatus");
 let availabilityRequest = 0;
 
+async function readJsonResponse(response, endpoint) {
+  const body = await response.text();
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    const responseType = /^\s*</.test(body) ? "an HTML page" : "an invalid response";
+    throw new Error(`${endpoint} returned ${responseType} (HTTP ${response.status}). Confirm the Flask API is deployed and routes are enabled on this host.`);
+  }
+}
+
 async function updateAvailability() {
   const requestId = ++availabilityRequest;
   const selectedDate = appointmentDate.value;
@@ -114,9 +124,9 @@ async function updateAvailability() {
   appointmentTime.disabled = true;
   availabilityStatus.textContent = "Checking available times...";
   try {
-    const query = new URLSearchParams({ date: selectedDate });
-    const response = await fetch("{{ url_for('appointment_availability') }}?" + query);
-    const result = await response.json();
+      const availabilityUrl = "{{ url_for('appointment_availability') }}?" + new URLSearchParams({ date: selectedDate });
+      const response = await fetch(availabilityUrl);
+      const result = await readJsonResponse(response, "/api/availability");
     if (requestId !== availabilityRequest || selectedDate !== appointmentDate.value) return;
     if (!response.ok) throw new Error(result.error || "Could not load available times.");
 
@@ -155,8 +165,8 @@ appointmentForm.addEventListener("submit", async function (e) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Object.fromEntries(new FormData(appointmentForm)))
-        });
-        const data = await response.json();
+      });
+      const data = await readJsonResponse(response, "/api/appointments");
 
       if (!response.ok) {
         status.className = "form-status fail";
@@ -176,7 +186,7 @@ appointmentForm.addEventListener("submit", async function (e) {
           method: "POST",
           body: new FormData(appointmentForm)
         });
-        const noticeData = await notice.json();
+        const noticeData = await readJsonResponse(notice, "Web3Forms notification");
         if (!notice.ok || !noticeData.success) throw new Error("Notification failed");
       } catch (noticeError) {
         status.textContent = "Your time is reserved, but we could not send the clinic notification. Please call us to confirm.";
@@ -184,12 +194,12 @@ appointmentForm.addEventListener("submit", async function (e) {
       appointmentForm.reset();
       await updateAvailability();
     } catch (error) {
-        console.error(error);
+      console.error(error);
       status.className = "form-status fail";
-      status.textContent = "Something went wrong. Please try again.";
+      status.textContent = error.message || "Something went wrong. Please try again.";
     } finally {
-        button.disabled = false;
-        button.textContent = "Book an Appointment";
+      button.disabled = false;
+      button.textContent = "Book an Appointment";
     }
 });
 </script>

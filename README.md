@@ -45,6 +45,7 @@ otherwise a keyless embedded map is shown. Restrict the key by HTTP referrer in 
 
 ## Production
 `gunicorn app:app` behind nginx, `FLASK_DEBUG=0`, and a MongoDB user with a password in `MONGO_URI`.
+The host must run this Flask application and route `/api/*` requests to it; static-only hosting returns HTML pages instead of the JSON required for appointment availability and booking.
 
 ## Structure
 ```
