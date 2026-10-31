@@ -29,7 +29,7 @@
         </p>
       </div>
 
-      <form action="https://api.web3forms.com/submit" method="POST" class="form-card" id="appointmentForm" novalidate>
+      <form action="{{ url_for('appointments') }}" method="POST" class="form-card" id="appointmentForm" novalidate>
         <input type="hidden" name="access_key" value="18e0d4d3-b10a-4794-a34d-591db3efc700">
         <input type="hidden" name="subject" value="New Appointment Booking">
         <input type="hidden" name="from_name" value="Ayurvedic Clinic Website">
@@ -68,11 +68,13 @@
           </div>
           <div class="field">
             <label for="a-time">Preferred Time</label>
-            <select id="a-time" name="time" required>
-              <option value="">Choose a time</option>
-              <option>09:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
-              <option>02:00 PM</option><option>03:00 PM</option><option>04:00 PM</option><option>05:00 PM</option>
+            <select id="a-time" name="time" required disabled>
+              <option value="">Choose a date first</option>
+              {% for slot in time_slots %}
+              <option value="{{ slot }}">{{ slot }}</option>
+              {% endfor %}
             </select>
+            <small class="availability-status" id="availabilityStatus" role="status" aria-live="polite">Choose a date to view open times.</small>
             <small class="err" data-for="time"></small>
           </div>
           <div class="field full">
@@ -93,6 +95,47 @@
 <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
 <script>
 const appointmentForm = document.getElementById("appointmentForm");
+const appointmentDate = document.getElementById("a-date");
+const appointmentTime = document.getElementById("a-time");
+const availabilityStatus = document.getElementById("availabilityStatus");
+let availabilityRequest = 0;
+
+async function updateAvailability() {
+  const requestId = ++availabilityRequest;
+  const selectedDate = appointmentDate.value;
+  appointmentTime.replaceChildren(new Option("Choose a time", ""));
+
+  if (!selectedDate) {
+    appointmentTime.disabled = true;
+    availabilityStatus.textContent = "Choose a date to view open times.";
+    return;
+  }
+
+  appointmentTime.disabled = true;
+  availabilityStatus.textContent = "Checking available times...";
+  try {
+    const query = new URLSearchParams({ date: selectedDate });
+    const response = await fetch("{{ url_for('appointment_availability') }}?" + query);
+    const result = await response.json();
+    if (requestId !== availabilityRequest || selectedDate !== appointmentDate.value) return;
+    if (!response.ok) throw new Error(result.error || "Could not load available times.");
+
+    result.available_slots.forEach((slot) => appointmentTime.add(new Option(slot, slot)));
+    if (result.available_slots.length) {
+      availabilityStatus.textContent = "Choose an available time.";
+      appointmentTime.disabled = false;
+    } else {
+      appointmentTime.options[0].textContent = "No times available";
+      availabilityStatus.textContent = "All appointment times are booked for this date.";
+    }
+  } catch (error) {
+    if (requestId !== availabilityRequest) return;
+    appointmentTime.options[0].textContent = "Times unavailable";
+    availabilityStatus.textContent = error.message;
+  }
+}
+
+appointmentDate.addEventListener("change", updateAvailability);
 
 appointmentForm.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -102,27 +145,48 @@ appointmentForm.addEventListener("submit", async function (e) {
     const honeypot = appointmentForm.querySelector('input[name="website"]');
     if (honeypot.value !== "") return;
 
-    status.textContent = "Sending appointment request...";
+    status.className = "form-status";
+    status.textContent = "Checking and reserving your appointment...";
     button.disabled = true;
     button.textContent = "Sending...";
 
     try {
-        const response = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            body: new FormData(appointmentForm)
+      const response = await fetch("{{ url_for('appointments') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Object.fromEntries(new FormData(appointmentForm)))
         });
         const data = await response.json();
 
-        if (data.success) {
-            status.textContent = "✓ Appointment request sent successfully! We will contact you shortly.";
-            appointmentForm.reset();
-        } else {
-            status.textContent = "✕ Unable to send your appointment request. Please try again.";
-            console.error(data);
+      if (!response.ok) {
+        status.className = "form-status fail";
+        status.textContent = data.error || "Please check your appointment details.";
+        Object.entries(data.errors || {}).forEach(([name, message]) => {
+          const error = appointmentForm.querySelector(`.err[data-for="${name}"]`);
+          if (error) error.textContent = message;
+        });
+        if (response.status === 409) await updateAvailability();
+        return;
         }
+
+      status.className = "form-status ok";
+      status.textContent = data.message;
+      try {
+        const notice = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: new FormData(appointmentForm)
+        });
+        const noticeData = await notice.json();
+        if (!notice.ok || !noticeData.success) throw new Error("Notification failed");
+      } catch (noticeError) {
+        status.textContent = "Your time is reserved, but we could not send the clinic notification. Please call us to confirm.";
+      }
+      appointmentForm.reset();
+      await updateAvailability();
     } catch (error) {
         console.error(error);
-        status.textContent = "✕ Something went wrong. Please try again.";
+      status.className = "form-status fail";
+      status.textContent = "Something went wrong. Please try again.";
     } finally {
         button.disabled = false;
         button.textContent = "Book an Appointment";

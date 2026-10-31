@@ -9,17 +9,20 @@ pip install -r requirements.txt
 cp .env.example .env                                   # edit values
 python app.py                                          # http://127.0.0.1:5000
 ```
-MongoDB must be running (`MONGO_URI`). If it is not reachable, submissions are appended to `data/*.jsonl`
-so nothing is lost while developing (a warning is logged).
+Appointment times are reserved atomically in `data/appointment_slots.sqlite3`, so only one booking can claim a date/time.
+Appointment details are also stored in MongoDB (`MONGO_URI`); if MongoDB is unavailable, submissions are appended to
+`data/*.jsonl` so nothing is lost while developing (a warning is logged).
 
 ## API
 | Method | Path | Purpose |
 |---|---|---|
 | GET  | `/api/services` | Service catalogue + time slots |
+| GET  | `/api/availability?date=YYYY-MM-DD` | Open appointment times for a date |
 | POST | `/api/appointments` | name, phone, email?, service, date, time, message? |
 | POST | `/api/contact` | name, email, message |
 
-Stored in MongoDB collections `appointments` and `contacts` (database `MONGO_DB`).
+Appointment slots are unique by date and time. Appointment details are stored in the SQLite reservation database and
+mirrored to MongoDB collections `appointments` and `contacts` (database `MONGO_DB`), or JSONL when MongoDB is unavailable.
 
 ## Treatment pages
 The homepage links to the individual treatment pages at `/treatments/postnatal-care`,

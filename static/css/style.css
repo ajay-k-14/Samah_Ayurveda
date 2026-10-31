@@ -336,6 +336,7 @@ textarea { resize: vertical; min-height: 96px; }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(217, 164, 89, .25); }
 .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: #b4452c; }
 .err { min-height: 1em; font-size: .78rem; color: #b4452c; }
+.availability-status { min-height: 1em; margin-top: .25rem; font-size: .78rem; color: var(--ink-soft); }
 .hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .form-status { margin: 1rem 0 0; font-size: .98rem; min-height: 1.4em; }
 .form-status.ok { color: var(--green); font-weight: 500; background: var(--sage); padding: 1rem 1.2rem; border-radius: 16px; }

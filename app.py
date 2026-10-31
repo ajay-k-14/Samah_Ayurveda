@@ -17,6 +17,7 @@ import json
 import logging
 import os
 import re
+import sqlite3
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -29,6 +30,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+BOOKING_DB_PATH = DATA_DIR / "appointment_slots.sqlite3"
 
 app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
@@ -247,13 +249,84 @@ def save(collection_name, doc):
     return False
 
 
+def _booking_connection():
+    DATA_DIR.mkdir(exist_ok=True)
+    conn = sqlite3.connect(BOOKING_DB_PATH, timeout=10)
+    conn.execute("PRAGMA busy_timeout = 10000")
+    conn.execute(
+        """CREATE TABLE IF NOT EXISTS appointment_slots (
+            appointment_date TEXT NOT NULL,
+            appointment_time TEXT NOT NULL,
+            appointment_json TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            PRIMARY KEY (appointment_date, appointment_time)
+        )"""
+    )
+    if conn.execute("PRAGMA user_version").fetchone()[0] == 0:
+        legacy_file = DATA_DIR / "appointments.jsonl"
+        if legacy_file.exists():
+            with legacy_file.open(encoding="utf-8") as stream:
+                for line in stream:
+                    try:
+                        appointment = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    appointment_date = appointment.get("date", "")
+                    appointment_time = appointment.get("time", "")
+                    if appointment_date and appointment_time:
+                        conn.execute(
+                            """INSERT OR IGNORE INTO appointment_slots
+                               (appointment_date, appointment_time, appointment_json, created_at)
+                               VALUES (?, ?, ?, ?)""",
+                            (appointment_date, appointment_time, line.strip(), appointment.get("created_at", "")),
+                        )
+        conn.execute("PRAGMA user_version = 1")
+        conn.commit()
+    return conn
+
+
+def booked_times(appointment_date):
+    conn = _booking_connection()
+    try:
+        rows = conn.execute(
+            "SELECT appointment_time FROM appointment_slots WHERE appointment_date = ?",
+            (appointment_date,),
+        )
+        return {row[0] for row in rows}
+    finally:
+        conn.close()
+
+
+def reserve_appointment(appointment):
+    conn = _booking_connection()
+    try:
+        conn.execute(
+            """INSERT INTO appointment_slots
+               (appointment_date, appointment_time, appointment_json, created_at)
+               VALUES (?, ?, ?, ?)""",
+            (
+                appointment["date"],
+                appointment["time"],
+                json.dumps(appointment, ensure_ascii=False),
+                appointment["created_at"],
+            ),
+        )
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+
 # ----------------------------------------------------------------- validation
 PHONE_RE = re.compile(r"^(?:\+91|0)?[\s-]?[6-9]\d{4}[\s-]?\d{5}$")
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-TIME_SLOTS = {
+TIME_SLOTS = (
     "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
     "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM",
-}
+)
 
 
 def clean(value, limit=500):
@@ -331,6 +404,7 @@ def appointment():
         "appointment.html",
         site=SITE,
         services=SERVICES,
+        time_slots=TIME_SLOTS,
         selected_service=requested_service,
     )
 
@@ -342,12 +416,30 @@ def gallery():
 
 @app.get("/api/services")
 def services():
-    return jsonify({"services": SERVICES, "time_slots": sorted(TIME_SLOTS)})
+    return jsonify({"services": SERVICES, "time_slots": TIME_SLOTS})
+
+
+@app.get("/api/availability")
+def appointment_availability():
+    requested_date = request.args.get("date", "")
+    try:
+        selected_date = date.fromisoformat(requested_date)
+    except ValueError:
+        return jsonify({"ok": False, "error": "Choose a valid date."}), 400
+    if selected_date < date.today():
+        return jsonify({"ok": False, "error": "Choose today or a future date."}), 400
+    try:
+        booked = booked_times(requested_date)
+    except sqlite3.Error:
+        log.exception("Could not load appointment availability")
+        return jsonify({"ok": False, "error": "Availability is temporarily unavailable."}), 503
+    available = [slot for slot in TIME_SLOTS if slot not in booked]
+    return jsonify({"ok": True, "date": requested_date, "available_slots": available})
 
 
 @app.post("/api/appointments")
 def appointments():
-    payload = request.get_json(silent=True) or {}
+    payload = request.get_json(silent=True) or request.form.to_dict()
     if payload.get("website"):  # honeypot – bots fill hidden fields
         return jsonify({"ok": True}), 201
     data = {
@@ -363,12 +455,18 @@ def appointments():
     errors = validate_appointment(data)
     if errors:
         return jsonify({"ok": False, "errors": errors}), 400
+    data["created_at"] = datetime.now(timezone.utc).isoformat()
+    try:
+        if not reserve_appointment(data):
+            return jsonify({"ok": False, "error": "That time has just been booked. Please choose another available time."}), 409
+    except Exception:  # noqa: BLE001
+        log.exception("Could not reserve appointment time")
+        return jsonify({"ok": False, "error": "Availability is temporarily unavailable. Please call us instead."}), 503
     try:
         save("appointments", data)
     except Exception:  # noqa: BLE001
-        log.exception("Could not save appointment")
-        return jsonify({"ok": False, "error": "Something went wrong. Please call us instead."}), 500
-    return jsonify({"ok": True, "message": "Appointment request received."}), 201
+        log.exception("Appointment is reserved, but could not be copied to the enquiry store")
+    return jsonify({"ok": True, "message": "Your request is received and this time is reserved. We will contact you to confirm."}), 201
 
 
 @app.post("/api/contact")
