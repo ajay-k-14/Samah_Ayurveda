@@ -33,9 +33,11 @@ DATA_DIR = BASE_DIR / "data"
 BOOKING_DB_PATH = Path(
     os.getenv("BOOKING_DB_PATH", str(DATA_DIR / "appointment_slots.sqlite3"))
 ).expanduser()
-BOOKING_STORAGE = os.getenv(
-    "BOOKING_STORAGE", "mongodb" if os.getenv("VERCEL") else "sqlite"
-).lower()
+BOOKING_STORAGE = (
+    "mongodb"
+    if os.getenv("VERCEL")
+    else os.getenv("BOOKING_STORAGE", "sqlite").lower()
+)
 
 app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
@@ -236,7 +238,7 @@ def _collection(name):
         _client.admin.command("ping")
         return _client[os.getenv("MONGO_DB", "samah_ayurveda")][name]
     except PyMongoError as exc:
-        log.warning("MongoDB unavailable (%s) – using file fallback", exc)
+        log.warning("MongoDB unavailable: %s", exc)
         _client = None
         return None
 
@@ -461,9 +463,18 @@ def appointment_availability():
         return jsonify({"ok": False, "error": "Choose today or a future date."}), 400
     try:
         booked = booked_times(requested_date)
-    except (sqlite3.Error, OSError, RuntimeError, PyMongoError):
+    except (RuntimeError, PyMongoError):
+        log.exception("MongoDB reservation store unavailable; verify MONGO_URI and Atlas network access")
+        return jsonify({
+            "ok": False,
+            "error": "MongoDB reservation storage is unavailable. Verify the Vercel MONGO_URI, MONGO_DB, credentials, and Atlas Network Access settings.",
+        }), 503
+    except (sqlite3.Error, OSError):
         log.exception("Could not load appointment availability from %s", BOOKING_DB_PATH)
-        return jsonify({"ok": False, "error": "Availability is temporarily unavailable."}), 503
+        return jsonify({
+            "ok": False,
+            "error": "Reservation storage is unavailable. Check BOOKING_STORAGE and BOOKING_DB_PATH.",
+        }), 503
     available = [slot for slot in TIME_SLOTS if slot not in booked]
     return jsonify({"ok": True, "date": requested_date, "available_slots": available})
 
