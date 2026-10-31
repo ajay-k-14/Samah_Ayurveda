@@ -141,7 +141,7 @@ PACKAGE_DETAILS = {
     "postnatal-care": {
         "title": "Postnatal Care Package",
         "summary": "A considered programme of care for a mother's recovery and the wellbeing of her baby.",
-        "duration": "Choose 7, 14, 21 or 28 days; the schedule is shaped around individual needs and confirmed with the care team.",
+        "duration": "Choose 7, 11, 16, 21 or 28 days; the schedule is shaped around individual needs and confirmed with the care team.",
         "therapies": [
             "Traditional Ayurvedic postnatal therapies",
             "Nourishing therapies and postpartum relaxation",
@@ -160,7 +160,8 @@ PACKAGE_DETAILS = {
         ],
         "plans": [
             {"name": "7 days", "duration": "Schedule confirmed at consultation"},
-            {"name": "14 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "11 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "16 days", "duration": "Schedule confirmed at consultation"},
             {"name": "21 days", "duration": "Schedule confirmed at consultation"},
             {"name": "28 days", "duration": "Schedule confirmed at consultation"},
         ],
@@ -168,7 +169,7 @@ PACKAGE_DETAILS = {
     "rejuvenation": {
         "title": "Rejuvenation Package",
         "summary": "A restorative course bringing together selected Ayurvedic therapies, unhurried care and time to reset.",
-        "duration": "Choose 7, 14, 21 or 28 days; the schedule is finalized after consultation.",
+        "duration": "Choose 7, 11, 16, 21 or 28 days; the schedule is finalized after consultation.",
         "therapies": [
             "Panchakarma and detox therapies, when suitable",
             "Ayurvedic massage and relaxation therapies",
@@ -187,7 +188,8 @@ PACKAGE_DETAILS = {
         ],
         "plans": [
             {"name": "7 days", "duration": "Schedule confirmed at consultation"},
-            {"name": "14 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "11 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "16 days", "duration": "Schedule confirmed at consultation"},
             {"name": "21 days", "duration": "Schedule confirmed at consultation"},
             {"name": "28 days", "duration": "Schedule confirmed at consultation"},
         ],
@@ -195,7 +197,7 @@ PACKAGE_DETAILS = {
     "cosmetology": {
         "title": "Ayurvedic Beauty Package",
         "summary": "A gentle, plant-led skin and beauty plan with treatments selected for your preferences and skin needs.",
-        "duration": "Choose 7, 14, 21 or 28 days; the treatment schedule is discussed after a skin consultation.",
+        "duration": "Choose 7, 11, 16, 21 or 28 days; the treatment schedule is discussed after a skin consultation.",
         "therapies": [
             "Natural skincare and Ayurvedic facials",
             "Skin therapies and radiance treatments",
@@ -214,7 +216,8 @@ PACKAGE_DETAILS = {
         ],
         "plans": [
             {"name": "7 days", "duration": "Schedule confirmed at consultation"},
-            {"name": "14 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "11 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "16 days", "duration": "Schedule confirmed at consultation"},
             {"name": "21 days", "duration": "Schedule confirmed at consultation"},
             {"name": "28 days", "duration": "Schedule confirmed at consultation"},
         ],
