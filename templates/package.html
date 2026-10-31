@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ package.title }} | Samah Ayurveda</title>
+  <meta name="description" content="{{ package.summary }}">
+  <meta name="theme-color" content="#314732">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+{% include "_site_header.html" %}
+
+<main id="main" class="package-page">
+  <section class="package-hero">
+    <div class="container package-hero-grid">
+      <div class="package-hero-copy">
+        <p class="eyebrow">Personalized Ayurvedic Care</p>
+        <h1>{{ package.title }}</h1>
+        <p>{{ package.summary }}</p>
+        <div class="package-hero-actions">
+          <a href="{{ url_for('appointment') }}" class="btn btn-green">Book Appointment</a>
+          <a class="package-back" href="{{ url_for('service_detail', service_id=service.id) }}">Explore {{ service.name }}</a>
+        </div>
+      </div>
+      <div class="package-hero-image">
+        <img src="{{ url_for('static', filename='images/' ~ service.image) }}" alt="{{ service.image_alt }}" width="900" height="700">
+      </div>
+    </div>
+  </section>
+
+  <section class="package-duration" aria-label="Programme duration">
+    <div class="container"><p><strong>Duration:</strong> {{ package.duration }}</p></div>
+  </section>
+
+  <section class="package-section">
+    <div class="container">
+      <div class="package-section-heading">
+        <p class="eyebrow">A plan made for you</p>
+        <h2>What your package can cover</h2>
+        <p>Every programme is discussed with you first. Treatments and timing are confirmed with the care team before you reserve.</p>
+      </div>
+      <div class="package-info-grid">
+        <article class="package-info-panel">
+          <h3>Therapies</h3>
+          <ul>{% for item in package.therapies %}<li>{{ item }}</li>{% endfor %}</ul>
+        </article>
+        <article class="package-info-panel">
+          <h3>Wellness focus</h3>
+          <ul>{% for item in package.benefits %}<li>{{ item }}</li>{% endfor %}</ul>
+        </article>
+        <article class="package-info-panel">
+          <h3>Package planning</h3>
+          <ul>{% for item in package.includes %}<li>{{ item }}</li>{% endfor %}</ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="package-section package-plans">
+    <div class="container package-plans-grid">
+      <div>
+        <div class="package-section-heading">
+          <p class="eyebrow">Options & pricing</p>
+          <h2>Find a suitable plan</h2>
+          <p>Plan length and current rates depend on the therapies agreed during consultation. Contact us for a personalized quote.</p>
+        </div>
+        <div class="package-plan-list">
+          {% for plan in package.plans %}
+          <div class="package-plan-row">
+            <div><strong>{{ plan.name }}</strong><span>{{ plan.duration }}</span></div>
+            <a class="package-plan-price" href="tel:{{ site.phone_tel }}" aria-label="Call {{ site.phone_display }} to ask for the {{ plan.name }} rate">Ask for rate</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <div class="package-section-heading">
+          <p class="eyebrow">Before you reserve</p>
+          <h2>Reservation details</h2>
+        </div>
+        <ul class="package-reservation">
+          <li>Package availability is confirmed by the clinic before a date is finalized.</li>
+          <li>We will share the confirmed schedule, inclusions and total fee with you in advance.</li>
+          <li>Any payment or deposit requirements will be explained when your booking is confirmed.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="package-booking">
+    <div class="container package-booking-inner">
+      <div>
+        <h2>Talk through your care plan</h2>
+        <p>Book a consultation and our team can help you explore the package options.</p>
+      </div>
+      <a href="{{ url_for('appointment') }}" class="btn btn-gold">Book Appointment</a>
+    </div>
+  </section>
+</main>
+
+{% include "_site_footer.html" %}
+<script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>

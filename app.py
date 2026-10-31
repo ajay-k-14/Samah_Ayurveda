@@ -128,6 +128,89 @@ SERVICE_DETAILS = {
         "action": "Discover Natural Beauty",
     },
 }
+PACKAGE_DETAILS = {
+    "postnatal-care": {
+        "title": "Postnatal Care Package",
+        "summary": "A considered programme of care for a mother's recovery and the wellbeing of her baby.",
+        "duration": "Choose 7, 14, 21 or 28 days; the schedule is shaped around individual needs and confirmed with the care team.",
+        "therapies": [
+            "Traditional Ayurvedic postnatal therapies",
+            "Nourishing therapies and postpartum relaxation",
+            "Mother and baby wellness support",
+            "Home-care options, subject to availability",
+        ],
+        "benefits": [
+            "Time and space to focus on rest and recovery",
+            "A plan shaped around the mother's comfort and daily routine",
+            "Support that considers both mother and baby",
+        ],
+        "includes": [
+            "A conversation about care needs and preferences",
+            "A recommended schedule for the agreed therapies",
+            "Clear details on location, availability and fees before confirmation",
+        ],
+        "plans": [
+            {"name": "7 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "14 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "21 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "28 days", "duration": "Schedule confirmed at consultation"},
+        ],
+    },
+    "rejuvenation": {
+        "title": "Rejuvenation Package",
+        "summary": "A restorative course bringing together selected Ayurvedic therapies, unhurried care and time to reset.",
+        "duration": "Choose 7, 14, 21 or 28 days; the schedule is finalized after consultation.",
+        "therapies": [
+            "Panchakarma and detox therapies, when suitable",
+            "Ayurvedic massage and relaxation therapies",
+            "Stress-relief and vitality-focused care",
+            "A selection tailored with the practitioner",
+        ],
+        "benefits": [
+            "A dedicated period for rest and relaxation",
+            "Therapies selected to suit your goals and assessment",
+            "A more structured approach to personal wellness",
+        ],
+        "includes": [
+            "An initial consultation to discuss your needs",
+            "A proposed therapy schedule for the selected duration",
+            "Current pricing and confirmed inclusions before reservation",
+        ],
+        "plans": [
+            {"name": "7 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "14 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "21 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "28 days", "duration": "Schedule confirmed at consultation"},
+        ],
+    },
+    "cosmetology": {
+        "title": "Ayurvedic Beauty Package",
+        "summary": "A gentle, plant-led skin and beauty plan with treatments selected for your preferences and skin needs.",
+        "duration": "Choose 7, 14, 21 or 28 days; the treatment schedule is discussed after a skin consultation.",
+        "therapies": [
+            "Natural skincare and Ayurvedic facials",
+            "Skin therapies and radiance treatments",
+            "Wellness-based beauty care",
+            "Product and treatment choices discussed with the team",
+        ],
+        "benefits": [
+            "A thoughtful routine built around your skin-care goals",
+            "Gentle, plant-based preparations",
+            "A chance to explore treatments at a comfortable pace",
+        ],
+        "includes": [
+            "A discussion of skin-care preferences and sensitivities",
+            "Recommended treatments and a suggested visit schedule",
+            "Current pricing and confirmed inclusions before reservation",
+        ],
+        "plans": [
+            {"name": "7 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "14 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "21 days", "duration": "Schedule confirmed at consultation"},
+            {"name": "28 days", "duration": "Schedule confirmed at consultation"},
+        ],
+    },
+}
 SERVICE_NAMES = {s["name"] for s in SERVICES} | {"General Consultation"}
 
 # -------------------------------------------------------------------- storage
@@ -221,6 +304,21 @@ def service_detail(service_id):
         site=SITE,
         services=SERVICES,
         service={**service, **details},
+    )
+
+
+@app.get("/packages/<service_id>")
+def package_detail(service_id):
+    service = next((item for item in SERVICES if item["id"] == service_id), None)
+    package = PACKAGE_DETAILS.get(service_id)
+    if service is None or package is None:
+        abort(404)
+    return render_template(
+        "package.html",
+        site=SITE,
+        services=SERVICES,
+        service={**service, **SERVICE_DETAILS[service_id]},
+        package=package,
     )
 
 
