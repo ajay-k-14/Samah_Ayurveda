@@ -12,6 +12,7 @@ python app.py                                          # http://127.0.0.1:5000
 Appointment times are reserved atomically in `data/appointment_slots.sqlite3`, so only one booking can claim a date/time.
 Appointment details are also stored in MongoDB (`MONGO_URI`); if MongoDB is unavailable, submissions are appended to
 `data/*.jsonl` so nothing is lost while developing (a warning is logged).
+On hosts where the project directory is read-only, set `BOOKING_DB_PATH` to an absolute path in a persistent writable directory.
 
 ## API
 | Method | Path | Purpose |

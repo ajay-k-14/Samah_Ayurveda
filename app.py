@@ -30,7 +30,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
-BOOKING_DB_PATH = DATA_DIR / "appointment_slots.sqlite3"
+BOOKING_DB_PATH = Path(
+    os.getenv("BOOKING_DB_PATH", str(DATA_DIR / "appointment_slots.sqlite3"))
+).expanduser()
 
 app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
@@ -250,7 +252,7 @@ def save(collection_name, doc):
 
 
 def _booking_connection():
-    DATA_DIR.mkdir(exist_ok=True)
+    BOOKING_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(BOOKING_DB_PATH, timeout=10)
     conn.execute("PRAGMA busy_timeout = 10000")
     conn.execute(
@@ -430,8 +432,8 @@ def appointment_availability():
         return jsonify({"ok": False, "error": "Choose today or a future date."}), 400
     try:
         booked = booked_times(requested_date)
-    except sqlite3.Error:
-        log.exception("Could not load appointment availability")
+    except (sqlite3.Error, OSError):
+        log.exception("Could not load appointment availability from %s", BOOKING_DB_PATH)
         return jsonify({"ok": False, "error": "Availability is temporarily unavailable."}), 503
     available = [slot for slot in TIME_SLOTS if slot not in booked]
     return jsonify({"ok": True, "date": requested_date, "available_slots": available})
@@ -460,7 +462,7 @@ def appointments():
         if not reserve_appointment(data):
             return jsonify({"ok": False, "error": "That time has just been booked. Please choose another available time."}), 409
     except Exception:  # noqa: BLE001
-        log.exception("Could not reserve appointment time")
+        log.exception("Could not reserve appointment time in %s", BOOKING_DB_PATH)
         return jsonify({"ok": False, "error": "Availability is temporarily unavailable. Please call us instead."}), 503
     try:
         save("appointments", data)
